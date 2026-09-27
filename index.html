@@ -1,129 +1,226 @@
-
 <!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Radiografía de Negocio · MVP funcional</title>
+<title>Radiografía de Negocio · MVP v0.4</title>
 <style>
-:root{--bg:#f4efe6;--card:#fffdf8;--ink:#1d241f;--muted:#667066;--olive:#59694d;--line:#d9d1c3;--soft:#e9e3d7}
+:root{--bg:#f4efe6;--card:#fffdf8;--ink:#1d241f;--muted:#697167;--olive:#59694d;--olive2:#76836b;--line:#d8d0c2;--soft:#ebe5da;--sand:#e7d8c4}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-header{position:sticky;top:0;background:rgba(244,239,230,.96);border-bottom:1px solid var(--line);padding:14px 5%;z-index:3}
-.brand{font-family:Georgia,serif;font-size:22px}.brand small{display:block;font:11px system-ui;letter-spacing:.15em;color:var(--olive);text-transform:uppercase}
-main{max-width:920px;margin:auto;padding:28px 18px 80px}h1,h2{font-family:Georgia,serif;font-weight:500}h1{font-size:clamp(36px,7vw,62px);line-height:1.02}h2{font-size:30px;margin-top:0}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin:16px 0;box-shadow:0 8px 25px rgba(30,30,20,.04)}
-label{font-weight:700;display:block;margin:16px 0 7px}input,textarea,select{width:100%;border:1px solid #bdb6aa;background:#fff;color:#20251f;border-radius:12px;padding:13px;font:inherit}
-textarea{min-height:115px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-button,.btn{border:0;border-radius:999px;background:var(--olive);color:white;padding:12px 17px;font-weight:700;cursor:pointer}.ghost{background:#fff;color:var(--olive);border:1px solid var(--olive)}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.note{color:var(--muted);font-size:14px}.ok{color:#36552f;font-weight:700}.warn{color:#8a5c19}
-.progress{height:8px;background:var(--soft);border-radius:10px;overflow:hidden}.progress i{display:block;height:100%;background:var(--olive);width:0}
-.filelist,.audiolist{font-size:14px;margin-top:8px}.pill{display:inline-block;background:var(--soft);padding:5px 9px;border-radius:999px;margin:3px}
-nav{display:flex;gap:6px;overflow:auto;padding:8px 0 18px}nav button{white-space:nowrap;background:#e7e0d3;color:#4b5548}nav button.active{background:var(--olive);color:#fff}
-section.step{display:none}section.step.active{display:block}
-.metric{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.metric div{background:var(--soft);padding:14px;border-radius:14px}
-@media(max-width:650px){.row,.metric{grid-template-columns:1fr}.card{padding:17px}main{padding-top:16px}}
+header{position:sticky;top:0;z-index:5;background:rgba(244,239,230,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:14px 5%}
+.brand{font:23px Georgia,serif}.brand small{display:block;font:11px system-ui;letter-spacing:.15em;text-transform:uppercase;color:var(--olive)}
+main{max-width:980px;margin:auto;padding:26px 18px 80px}
+h1,h2,h3{font-family:Georgia,serif;font-weight:500}h1{font-size:clamp(35px,6vw,58px);line-height:1.03;margin:.25em 0}h2{font-size:31px;margin:.25em 0}.lead{font-size:19px;color:#465047;max-width:760px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px;margin:16px 0;box-shadow:0 10px 28px rgba(30,30,20,.045)}
+.choicegrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.choice{cursor:pointer;min-height:175px}.choice:hover{border-color:var(--olive)}
+.choice b{font:27px Georgia,serif}.choice p{color:var(--muted)}
+label{display:block;font-weight:700;margin:16px 0 7px}input,textarea,select{width:100%;padding:13px;border:1px solid #bcb4a8;border-radius:12px;background:#fff;color:#1e241f;font:inherit}
+textarea{min-height:110px;resize:vertical}.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+button{border:0;border-radius:999px;background:var(--olive);color:#fff;padding:12px 18px;font-weight:700;cursor:pointer}.ghost{background:#fff;color:var(--olive);border:1px solid var(--olive)}.tiny{padding:8px 12px;font-size:13px}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.note{color:var(--muted);font-size:14px}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--olive);text-transform:uppercase}
+nav{display:flex;gap:6px;overflow:auto;padding:7px 0 17px}nav button{white-space:nowrap;background:#e7e0d3;color:#465047}nav button.active{background:var(--olive);color:#fff}
+.step{display:none}.step.active{display:block}.hidden{display:none!important}
+.progress{height:8px;background:var(--soft);border-radius:12px;overflow:hidden}.progress i{height:100%;display:block;background:var(--olive);width:0}
+.pill{display:inline-block;background:var(--soft);border-radius:999px;padding:5px 9px;margin:3px}.filelist,.audiolist{margin-top:10px;font-size:14px}
+.activity{border-top:1px solid var(--line);padding:12px 0}.activity:first-child{border-top:0}
+.qpair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.qopt{border:1px solid var(--line);border-radius:14px;padding:12px;cursor:pointer;background:#fff}.qopt input{width:auto;margin-right:7px}
+.profilebox{background:var(--soft);border-radius:16px;padding:16px;margin-top:15px}.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.swatches div{background:#fff;border:1px solid var(--line);padding:10px;border-radius:12px;text-align:center}
+.metric{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.metric div{background:var(--soft);border-radius:14px;padding:14px}.metric b{font-size:23px}
+.modebar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.modebar button{background:#e7e0d3;color:#465047}.modebar button.active{background:var(--olive);color:#fff}
+.audio-note{border-left:4px solid var(--olive);padding-left:12px}
+@media(max-width:700px){.choicegrid,.row,.qpair,.metric,.swatches{grid-template-columns:1fr}.card{padding:17px}main{padding-top:15px}}
 </style>
 </head>
 <body>
-<header><div class="brand">Elisabeth Tchana<small>Consultoría de negocio · Radiografía beta</small></div></header>
+<header><div class="brand">Elisabeth Tchana<small>Consultoría de negocio · Radiografía beta v0.4</small></div></header>
 <main>
-<div class="card">
-<strong>MVP funcional · v0.3.1</strong>
-<p class="note">Tus respuestas, archivos y audios se guardan en <b>este navegador y este dispositivo</b>. Puedes cerrar y volver. En esta beta todavía no se envían a Elisabeth ni se procesan con IA.</p>
-<div class="progress"><i id="bar"></i></div><div id="status" class="note"></div>
+<section id="home">
+<p class="eyebrow">Radiografía de Negocio</p>
+<h1>Primero necesito saber desde dónde estás mirando el negocio.</h1>
+<p class="lead">Dirección y equipo no responden lo mismo. Las dos miradas se cruzarán después para detectar coincidencias, contradicciones, dependencias y oportunidades.</p>
+<div class="choicegrid">
+<div class="card choice" id="chooseDirection"><b>Soy Dirección</b><p>Negocio, objetivos, números, clientes, organización, decisiones, evidencias y tu propio trabajo real.</p><button>Entrar como Dirección</button></div>
+<div class="card choice" id="chooseTeam"><b>Soy parte del equipo</b><p>Tu rol real, forma de trabajar, bloqueos, tareas, herramientas y registro de una semana real.</p><button>Entrar como Equipo</button></div>
 </div>
+<p class="note">Beta: la información se guarda en este navegador y dispositivo. Más adelante cada persona tendrá un expediente conectado al mismo negocio.</p>
+</section>
+
+<section id="workspace" class="hidden">
+<div class="modebar"><button id="backHome" class="ghost">← Cambiar vista</button><span id="modeLabel" class="pill"></span></div>
+<div class="card"><b id="saveTitle">Guardado automático</b><p id="saveText" class="note"></p><div class="progress"><i id="bar"></i></div><div id="status" class="note"></div></div>
 <nav id="nav"></nav>
 
-<section class="step" data-title="1 · Empresa">
-<h1>Empecemos por entender tu negocio.</h1>
+<!-- DIRECCIÓN -->
+<section class="step direction" data-title="1 · Negocio">
+<p class="eyebrow">Dirección</p><h2>El negocio, desde tu punto de vista.</h2>
 <div class="card">
-<div class="row"><div><label>Empresa</label><input data-save id="empresa"></div><div><label>Tu nombre</label><input data-save id="nombre"></div></div>
-<div class="row"><div><label>Web</label><input data-save id="web" placeholder="https://"></div><div><label>Personas en el equipo</label><input data-save id="equipo" type="number" min="1"></div></div>
-<label>¿Qué hacéis y cómo gana dinero el negocio?</label><textarea data-save id="modelo"></textarea>
-<label>¿Qué crees que os está frenando ahora?</label><textarea data-save id="freno"></textarea>
-<label>Si dentro de 12 meses esto hubiera ido muy bien, ¿qué habría cambiado?</label><textarea data-save id="objetivo"></textarea>
-</div></section>
-
-<section class="step" data-title="2 · Evidencias">
-<h2>Comparte lo que ya existe.</h2><p>No prepares informes nuevos. Sube aquello que ya utilizáis.</p>
-<div class="card"><label>Excel, CSV, PDF, Word, imágenes…</label>
-<input id="files" type="file" multiple accept=".xlsx,.xls,.csv,.pdf,.doc,.docx,.txt,.png,.jpg,.jpeg">
-<div class="filelist" id="filelist"></div><p class="note">En esta beta los archivos se almacenan localmente mediante IndexedDB. Para la versión online pasarán al expediente seguro del cliente.</p></div>
-</section>
-
-<section class="step" data-title="3 · Conversación">
-<h2>Cuéntamelo como lo harías tomando un café.</h2>
-<div class="card">
-<label>Piensa en tus últimos clientes. ¿Cómo llegaron hasta ti?</label><textarea data-save id="captacion"></textarea>
-<label>¿Qué pasa desde que alguien dice “me interesa” hasta que compra o se pierde?</label><textarea data-save id="conversion"></textarea>
-<label>Después de vender, ¿qué hacéis para que vuelva, renueve o compre algo más?</label><textarea data-save id="postventa"></textarea>
-<label>¿Qué cosas importantes se paran si tú no estás?</label><textarea data-save id="dependencia"></textarea>
+<div class="row"><div><label>Empresa</label><input data-dir id="d_empresa"></div><div><label>Tu nombre</label><input data-dir id="d_nombre"></div></div>
+<div class="row"><div><label>Web</label><input data-dir id="d_web" placeholder="https://"></div><div><label>Personas en el equipo</label><input data-dir id="d_equipo" type="number" min="1"></div></div>
+<label>¿Qué hacéis y cómo gana dinero el negocio?</label><textarea data-dir id="d_modelo"></textarea>
+<label>¿Qué crees que está frenando ahora al negocio?</label><textarea data-dir id="d_freno"></textarea>
+<label>Si dentro de 12 meses todo hubiera ido muy bien, ¿qué habría cambiado de verdad?</label><textarea data-dir id="d_objetivo"></textarea>
 </div>
-<div class="card"><h3>Prefiero contarlo hablando</h3><p class="note">Pulsa grabar, habla y detén cuando termines. El audio queda guardado en este dispositivo.</p>
-<div class="actions"><button id="record">● Grabar respuesta</button><button class="ghost" id="stop" disabled>■ Detener</button></div><div class="audiolist" id="audiolist"></div></div>
 </section>
 
-<section class="step" data-title="4 · Semana Real">
-<h2>Semana Real</h2><p>Registra actividades sin clasificarlas. Queremos realidad, no un parte perfecto.</p>
+<section class="step direction" data-title="2 · Negocio real">
+<h2>Clientes, ventas y funcionamiento real.</h2>
 <div class="card">
-<label>¿Qué acabas de hacer?</label><textarea id="actividad"></textarea>
-<div class="row"><div><label>Minutos</label><input id="minutos" type="number"></div><div><label>Herramienta</label><input id="herramienta" placeholder="WhatsApp, CRM, Excel…"></div></div>
-<div class="actions"><button id="addActivity">Guardar actividad</button></div><div id="activities"></div>
-</div></section>
+<label>Piensa en tus últimos 10 clientes. ¿Cómo llegaron?</label><textarea data-dir id="d_captacion"></textarea>
+<label>¿Qué ocurre desde que alguien dice «me interesa» hasta que compra o se pierde?</label><textarea data-dir id="d_conversion"></textarea>
+<label>¿Qué hacéis después de vender para que vuelva, renueve o compre más?</label><textarea data-dir id="d_postventa"></textarea>
+<label>¿Qué cosas importantes se paran o retrasan si tú no estás?</label><textarea data-dir id="d_dependencia"></textarea>
+<label>¿Qué números miras hoy para saber si el negocio va bien?</label><textarea data-dir id="d_kpis"></textarea>
+</div>
+</section>
 
-<section class="step" data-title="5 · Cierre">
-<h2>Antes de terminar…</h2>
+<section class="step direction" data-title="3 · Evidencias">
+<h2>No prepares nada nuevo. Enséñame lo que ya existe.</h2>
 <div class="card">
-<label>¿Qué problema importante sabes que existe pero sigues posponiendo?</label><textarea data-save id="riesgo"></textarea>
-<label>¿Qué tipo de cliente, producto o trabajo factura pero os consume demasiado?</label><textarea data-save id="costeComplejidad"></textarea>
-<label>¿Qué números miras para saber si el negocio va bien?</label><textarea data-save id="kpis"></textarea>
-<label>¿Hay algo importante que no te hayamos preguntado?</label><textarea data-save id="faltante"></textarea>
-</div></section>
+<label>Excel, CSV, PDF, Word, imágenes…</label><input id="d_files" type="file" multiple accept=".xlsx,.xls,.csv,.pdf,.doc,.docx,.txt,.png,.jpg,.jpeg">
+<div id="d_filelist" class="filelist"></div>
+<p class="note">Ejemplos: ventas, CRM, tarifas, costes, catálogo, organigrama, procesos, informes o cuadros de mando.</p>
+</div>
+</section>
 
-<section class="step" data-title="6 · Expediente">
-<h2>Tu expediente de prueba</h2>
-<div class="card"><div class="metric"><div><b id="mAnswers">0</b><br><span class="note">respuestas</span></div><div><b id="mFiles">0</b><br><span class="note">archivos</span></div><div><b id="mActs">0</b><br><span class="note">actividades</span></div></div>
-<p id="summary"></p>
-<div class="actions"><button id="export">Exportar respuestas (.json)</button><button class="ghost" id="clear">Borrar prueba</button></div>
-<p class="note">El JSON permite que, durante esta fase beta, nos pases el expediente estructurado para probar el motor diagnóstico sin copiar y pegar todas las respuestas.</p></div>
+<section class="step direction" data-title="4 · Tu trabajo real">
+<h2>Quiero ver también cómo trabajas tú.</h2>
+<p class="lead">No hace falta registrar cada minuto. Puedes usar el método que menos fricción te genere.</p>
+<div class="card">
+<h3>Opción A · Contármelo hablando</h3>
+<p class="audio-note">Al final del día o de la semana puedes grabarme: qué has hecho, qué te ha ocupado más, qué has tenido que resolver tú, qué se ha bloqueado y qué has dejado pendiente.</p>
+<div class="actions"><button id="d_record">● Grabar día / semana</button><button id="d_stop" class="ghost" disabled>■ Detener</button></div>
+<div id="d_audiolist" class="audiolist"></div>
+</div>
+<div class="card">
+<h3>Opción B · Registrar actividades concretas</h3>
+<label>¿Qué acabas de hacer?</label><textarea id="d_activity"></textarea>
+<div class="row"><div><label>Minutos aproximados</label><input id="d_minutes" type="number"></div><div><label>Herramienta</label><input id="d_tool" placeholder="WhatsApp, CRM, Excel…"></div></div>
+<label>¿Ha habido algún bloqueo, espera o retrabajo?</label><input id="d_block">
+<div class="actions"><button id="d_addActivity">Guardar actividad</button></div><div id="d_activities"></div>
+</div>
+</section>
+
+<section class="step direction" data-title="5 · Cierre">
+<h2>Últimas pistas antes de analizar.</h2>
+<div class="card">
+<label>¿Qué problema importante sabes que existe pero sigues posponiendo?</label><textarea data-dir id="d_riesgo"></textarea>
+<label>¿Qué cliente, producto o tipo de trabajo factura pero os consume demasiado?</label><textarea data-dir id="d_complejidad"></textarea>
+<label>¿Qué decisión importante estás evitando porque te faltan datos o claridad?</label><textarea data-dir id="d_decision"></textarea>
+<label>¿Hay algo importante que no te haya preguntado?</label><textarea data-dir id="d_faltante"></textarea>
+</div>
+</section>
+
+<!-- EQUIPO -->
+<section class="step team" data-title="1 · Tú">
+<p class="eyebrow">Equipo</p><h2>Primero, ubícame en tu realidad.</h2>
+<div class="card">
+<div class="row"><div><label>Tu nombre</label><input data-team id="t_nombre"></div><div><label>Puesto / rol</label><input data-team id="t_rol"></div></div>
+<label>¿Cuál dirías que es tu responsabilidad principal?</label><textarea data-team id="t_responsabilidad"></textarea>
+<label>¿Qué tareas ocupan de verdad la mayor parte de tu semana?</label><textarea data-team id="t_tareas"></textarea>
+<label>¿Qué decisiones puedes tomar tú sin pedir permiso?</label><textarea data-team id="t_decisiones"></textarea>
+<label>¿Qué cosas haces que crees que no deberían depender de ti?</label><textarea data-team id="t_fuera"></textarea>
+</div>
+</section>
+
+<section class="step team" data-title="2 · Estilo de trabajo">
+<h2>Cómo tiendes a trabajar.</h2>
+<p class="note">No es un test psicológico ni el perfil oficial Insights Discovery. Es una orientación interna basada en cuatro estilos de trabajo para ayudarte a entender el encaje persona–rol.</p>
+<div class="card" id="styleQuestions"></div>
+<div class="profilebox"><b>Lectura orientativa</b><div id="profileResult" class="note">Responde las preguntas para ver una hipótesis de estilo.</div></div>
+</section>
+
+<section class="step team" data-title="3 · Operativa">
+<h2>Lo que te ayuda y lo que te frena.</h2>
+<div class="card">
+<label>¿Dónde crees que se pierde más tiempo?</label><textarea data-team id="t_tiempo"></textarea>
+<label>¿Qué tarea repetitiva te gustaría hacer menos o automatizar?</label><textarea data-team id="t_automatizar"></textarea>
+<label>¿Qué información o herramienta te falta para trabajar mejor?</label><textarea data-team id="t_falta"></textarea>
+<label>¿Qué problema se repite una y otra vez?</label><textarea data-team id="t_repite"></textarea>
+<label>¿Qué parte de tu trabajo disfrutas más? ¿Y cuál menos?</label><textarea data-team id="t_gusta"></textarea>
+<label>¿De quién dependes más para poder terminar tu trabajo?</label><textarea data-team id="t_dependencia"></textarea>
+</div>
+</section>
+
+<section class="step team" data-title="4 · Semana Real">
+<h2>Tu Semana Real.</h2>
+<p class="lead">Puedes registrar tareas concretas o simplemente contarme tu día hablando. Lo importante es captar la realidad con poca fricción.</p>
+<div class="card">
+<h3>Opción A · Audio</h3>
+<p class="audio-note">Cuéntame qué has hecho hoy, qué te ha llevado más tiempo, con quién has tenido que coordinarte, qué se ha bloqueado y qué has dejado pendiente.</p>
+<div class="actions"><button id="t_record">● Grabar mi día</button><button id="t_stop" class="ghost" disabled>■ Detener</button></div>
+<div id="t_audiolist" class="audiolist"></div>
+</div>
+<div class="card">
+<h3>Opción B · Actividad rápida</h3>
+<label>¿Qué acabas de hacer?</label><textarea id="t_activity"></textarea>
+<div class="row"><div><label>Minutos aproximados</label><input id="t_minutes" type="number"></div><div><label>Herramienta</label><input id="t_tool" placeholder="WhatsApp, Excel, CRM…"></div></div>
+<div class="row"><div><label>¿Con quién has tenido que coordinarte?</label><input id="t_with"></div><div><label>¿Ha habido bloqueo o espera?</label><input id="t_block"></div></div>
+<div class="actions"><button id="t_addActivity">Guardar actividad</button></div><div id="t_activities"></div>
+</div>
+</section>
+
+<section class="step team" data-title="5 · Cierre">
+<h2>Una última mirada.</h2>
+<div class="card">
+<label>Si pudieras cambiar una sola cosa del funcionamiento del equipo, ¿cuál sería?</label><textarea data-team id="t_cambio"></textarea>
+<label>¿Hay algo importante que Dirección quizá no vea desde su posición?</label><textarea data-team id="t_invisible"></textarea>
+<label>¿Hay algo más que debería saber para entender cómo trabajáis?</label><textarea data-team id="t_faltante"></textarea>
+</div>
+</section>
+
+<section class="step common" data-title="6 · Expediente">
+<h2>Expediente de prueba</h2>
+<div class="card"><div class="metric"><div><b id="mAnswers">0</b><br><span class="note">respuestas</span></div><div><b id="mFiles">0</b><br><span class="note">archivos</span></div><div><b id="mAudios">0</b><br><span class="note">audios</span></div><div><b id="mActs">0</b><br><span class="note">actividades</span></div></div>
+<p id="summary"></p><div class="actions"><button id="exportBtn">Exportar expediente (.json)</button><button id="clearBtn" class="ghost">Borrar esta prueba</button></div>
+<p class="note">En la siguiente versión estos expedientes se unirán por empresa y tú, como consultora, podrás ver Dirección + Equipo + evidencias en un único panel.</p></div>
+</section>
 </section>
 </main>
 <script>
-const fields=[...document.querySelectorAll('[data-save]')], KEY='et_radiografia_v03';
-let state=JSON.parse(localStorage.getItem(KEY)||'{"answers":{},"activities":[]}');
-function persist(){localStorage.setItem(KEY,JSON.stringify(state));update()}
-fields.forEach(el=>{el.value=state.answers[el.id]||'';el.addEventListener('input',()=>{state.answers[el.id]=el.value;persist()})});
-const steps=[...document.querySelectorAll('.step')],nav=document.getElementById('nav');let current=0;
-steps.forEach((s,i)=>{let b=document.createElement('button');b.textContent=s.dataset.title;b.onclick=()=>show(i);nav.appendChild(b)});
-function show(i){current=i;steps.forEach((s,j)=>s.classList.toggle('active',j===i));[...nav.children].forEach((b,j)=>b.classList.toggle('active',j===i));update();scrollTo({top:0,behavior:'smooth'})}
-function update(){let answered=Object.values(state.answers).filter(v=>String(v).trim()).length;let pct=Math.round(answered/fields.length*100);document.getElementById('bar').style.width=pct+'%';document.getElementById('status').textContent=`${pct}% de respuestas base completadas · guardado automático`;document.getElementById('mAnswers').textContent=answered;document.getElementById('mActs').textContent=state.activities.length;document.getElementById('summary').textContent=answered?'Tu información está guardada en este dispositivo. Puedes cerrar esta página y continuar después.':'Empieza por completar la información de empresa.';renderActs()}
-function renderActs(){document.getElementById('activities').innerHTML=state.activities.map((a,i)=>`<p><span class="pill">${a.min||'?'} min</span><b>${escapeHtml(a.text)}</b> · ${escapeHtml(a.tool||'sin herramienta')}</p>`).join('')}
-function escapeHtml(s=''){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-const actividadEl=document.getElementById('actividad');
-const minutosEl=document.getElementById('minutos');
-const herramientaEl=document.getElementById('herramienta');
-document.getElementById('addActivity').onclick=()=>{let text=actividadEl.value.trim();if(!text)return alert('Cuéntame qué acabas de hacer.');state.activities.push({text,min:minutosEl.value,tool:herramientaEl.value,at:new Date().toISOString()});actividadEl.value='';minutosEl.value='';herramientaEl.value='';persist()};
+const SKEY='et_radiografia_v04_state', DBNAME='et_radiografia_v04_files';
+let all=JSON.parse(localStorage.getItem(SKEY)||'{"direction":{"answers":{},"activities":[]},"team":{"answers":{},"activities":[],"style":{}}}');
+let mode=null,current=0,db=null,recorder=null,chunks=[];
+const $=id=>document.getElementById(id);
+const dirFields=[...document.querySelectorAll('[data-dir]')], teamFields=[...document.querySelectorAll('[data-team]')];
+function persist(){localStorage.setItem(SKEY,JSON.stringify(all));update()}
+function bindFields(fields,key){fields.forEach(el=>{el.value=all[key].answers[el.id]||'';el.addEventListener('input',()=>{all[key].answers[el.id]=el.value;persist()})})}
+bindFields(dirFields,'direction');bindFields(teamFields,'team');
 
-// IndexedDB files/audio
-let db; const req=indexedDB.open('et_radiografia_files',1);req.onupgradeneeded=e=>{if(!e.target.result.objectStoreNames.contains('items'))e.target.result.createObjectStore('items',{keyPath:'id'})};req.onsuccess=e=>{db=e.target.result;renderStored()};
-function putItem(obj){let tx=db.transaction('items','readwrite');tx.objectStore('items').put(obj);tx.oncomplete=renderStored}
-const fileInput=document.getElementById('files');
-const fileListEl=document.getElementById('filelist');
-const audioListEl=document.getElementById('audiolist');
-const mFilesEl=document.getElementById('mFiles');
-function renderStored(){if(!db)return;let r=db.transaction('items').objectStore('items').getAll();r.onsuccess=()=>{let items=r.result,fs=items.filter(x=>x.kind==='file'),as=items.filter(x=>x.kind==='audio');fileListEl.innerHTML=fs.map(x=>`<span class="pill">📎 ${escapeHtml(x.name)}</span>`).join('')||'<span class="note">Todavía no has adjuntado archivos.</span>';audioListEl.innerHTML=as.map(x=>`<p><audio controls src="${URL.createObjectURL(x.blob)}"></audio> <span class="note">${new Date(x.created).toLocaleString()}</span></p>`).join('');mFilesEl.textContent=fs.length}};
-fileInput.onchange=()=>[...fileInput.files].forEach(f=>putItem({id:crypto.randomUUID(),kind:'file',name:f.name,type:f.type,blob:f,created:Date.now()}));
+function start(which){mode=which;$('home').classList.add('hidden');$('workspace').classList.remove('hidden');$('modeLabel').textContent=which==='direction'?'Vista Dirección':'Vista Equipo';$('saveText').textContent=which==='direction'?'Tu información de Dirección se guarda automáticamente en este dispositivo.':'Tu información personal se guarda automáticamente en este dispositivo.';buildNav();show(0);renderStored()}
+$('chooseDirection').onclick=()=>start('direction');$('chooseTeam').onclick=()=>start('team');$('backHome').onclick=()=>{$('workspace').classList.add('hidden');$('home').classList.remove('hidden');mode=null}
 
-// Recorder
-let rec,chunks=[];
-const recordBtn=document.getElementById('record');
-const stopBtn=document.getElementById('stop');
-recordBtn.onclick=async()=>{try{let stream=await navigator.mediaDevices.getUserMedia({audio:true});rec=new MediaRecorder(stream);chunks=[];rec.ondataavailable=e=>chunks.push(e.data);rec.onstop=()=>{let blob=new Blob(chunks,{type:rec.mimeType});putItem({id:crypto.randomUUID(),kind:'audio',name:'respuesta-audio',type:rec.mimeType,blob,created:Date.now()});stream.getTracks().forEach(t=>t.stop())};rec.start();recordBtn.disabled=true;stopBtn.disabled=false;recordBtn.textContent='Grabando…'}catch(e){alert('El navegador no ha permitido usar el micrófono. Revisa los permisos del navegador.')}}
-stopBtn.onclick=()=>{if(rec&&rec.state!=='inactive')rec.stop();recordBtn.disabled=false;stopBtn.disabled=true;recordBtn.textContent='● Grabar respuesta'};
+function activeSteps(){return [...document.querySelectorAll('.step')].filter(s=>s.classList.contains(mode)||s.classList.contains('common'))}
+function buildNav(){const n=$('nav');n.innerHTML='';activeSteps().forEach((s,i)=>{let b=document.createElement('button');b.textContent=s.dataset.title;b.onclick=()=>show(i);n.appendChild(b)})}
+function show(i){current=i;document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));let a=activeSteps();a[i].classList.add('active');[...$('nav').children].forEach((b,j)=>b.classList.toggle('active',j===i));update();scrollTo({top:0,behavior:'smooth'})}
+function update(){if(!mode)return;let obj=all[mode],fields=mode==='direction'?dirFields:teamFields,answered=Object.values(obj.answers).filter(v=>String(v).trim()).length,styleN=mode==='team'?Object.keys(obj.style).length:0,total=fields.length+(mode==='team'?8:0),pct=Math.round((answered+styleN)/Math.max(total,1)*100);$('bar').style.width=pct+'%';$('status').textContent=`${pct}% de la información base completada · guardado automático`;$('mAnswers').textContent=answered+styleN;$('mActs').textContent=obj.activities.length;$('summary').textContent=answered?'Puedes cerrar esta página y continuar más tarde desde este mismo dispositivo y navegador.':'Todavía no has empezado a responder.';renderActs();renderProfile()}
 
-const exportBtn=document.getElementById('export');
-const clearBtn=document.getElementById('clear');
-exportBtn.onclick=()=>{let blob=new Blob([JSON.stringify({...state,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(state.answers.empresa||'empresa')+'-radiografia-beta.json';a.click()};
-clearBtn.onclick=()=>{if(confirm('¿Borrar todas las respuestas y actividades de esta prueba?')){localStorage.removeItem(KEY);if(db){let tx=db.transaction('items','readwrite');tx.objectStore('items').clear();tx.oncomplete=()=>location.reload()}else location.reload()}};
-show(0);
+function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function renderActs(){if(!mode)return;let box=$(mode==='direction'?'d_activities':'t_activities');if(!box)return;box.innerHTML=all[mode].activities.map(a=>`<div class="activity"><span class="pill">${esc(a.min||'?')} min</span><b>${esc(a.text)}</b><div class="note">${esc(a.tool||'sin herramienta')}${a.with?' · con '+esc(a.with):''}${a.block?' · bloqueo: '+esc(a.block):''}</div></div>`).join('')||'<p class="note">Todavía no hay actividades registradas.</p>'}
+function addAct(which){let pre=which==='direction'?'d_':'t_',text=$(pre+'activity').value.trim();if(!text)return alert('Cuéntame qué acabas de hacer.');all[which].activities.push({text,min:$(pre+'minutes').value,tool:$(pre+'tool').value,with:which==='team'?$('t_with').value:'',block:$(pre+'block').value,at:new Date().toISOString()});$(pre+'activity').value='';$(pre+'minutes').value='';$(pre+'tool').value='';$(pre+'block').value='';if(which==='team')$('t_with').value='';persist()}
+$('d_addActivity').onclick=()=>addAct('direction');$('t_addActivity').onclick=()=>addAct('team');
+
+const qs=[
+['Cuando hay presión y falta tiempo, tiendo a…',['Decidir rápido y avanzar','Hablarlo y mover al grupo','Mantener la calma y ayudar','Revisar datos antes de actuar']],
+['En una reunión suelo aportar más cuando…',['Hay que tomar una decisión','Hay ideas y personas que activar','Hay que escuchar y dar estabilidad','Hay que ordenar y concretar']],
+['Me siento más cómodo/a con…',['Retos y autonomía','Variedad y contacto','Ritmo estable y colaboración','Criterios claros y precisión']],
+['Si algo no funciona, mi primer impulso es…',['Cambiarlo ya','Buscar alternativas con otros','Entender cómo afecta al equipo','Analizar qué ha fallado']],
+['Al recibir una tarea nueva prefiero…',['Saber el objetivo y moverme','Poder explorar y proponer','Tener contexto y apoyo','Tener alcance y criterios claros']],
+['En ventas o trato con cliente me sale más natural…',['Ir al grano y cerrar','Conectar y generar entusiasmo','Escuchar y acompañar','Preparar bien la información']],
+['Me molesta especialmente…',['La lentitud','La rutina','El conflicto innecesario','La improvisación sin datos']],
+['Cuando termino un trabajo valoro más…',['El resultado','La energía generada','Que todo el mundo esté bien','Que esté correcto y bien hecho']]
+], colors=['Rojo','Amarillo','Verde','Azul'];
+function buildStyle(){let box=$('styleQuestions');box.innerHTML='';qs.forEach((q,qi)=>{let wrap=document.createElement('div');wrap.innerHTML=`<label>${qi+1}. ${q[0]}</label><div class="qpair">${q[1].map((o,oi)=>`<label class="qopt"><input type="radio" name="style${qi}" value="${colors[oi]}" ${all.team.style[qi]===colors[oi]?'checked':''}>${o}</label>`).join('')}</div>`;box.appendChild(wrap)});box.querySelectorAll('input').forEach(x=>x.onchange=()=>{let qi=Number(x.name.replace('style',''));all.team.style[qi]=x.value;persist()})}
+buildStyle();
+function renderProfile(){if(!mode||mode!=='team')return;let counts={Rojo:0,Amarillo:0,Verde:0,Azul:0};Object.values(all.team.style).forEach(c=>counts[c]++);let n=Object.values(counts).reduce((a,b)=>a+b,0);if(!n){$('profileResult').textContent='Responde las preguntas para ver una hipótesis de estilo.';return}let ordered=Object.entries(counts).sort((a,b)=>b[1]-a[1]);$('profileResult').innerHTML=`<div class="swatches">${Object.entries(counts).map(([c,v])=>`<div><b>${c}</b><br>${v}/${n}</div>`).join('')}</div><p>Hipótesis dominante: <b>${ordered[0][0]}</b>${ordered[1][1]===ordered[0][1]?' + '+ordered[1][0]:ordered[1][1]?' con rasgos '+ordered[1][0]:''}. Esto es una orientación de estilo de trabajo, no una evaluación psicológica.</p>`}
+
+const open=indexedDB.open(DBNAME,1);open.onupgradeneeded=e=>{if(!e.target.result.objectStoreNames.contains('items'))e.target.result.createObjectStore('items',{keyPath:'id'})};open.onsuccess=e=>{db=e.target.result;renderStored()};
+function putItem(o){let tx=db.transaction('items','readwrite');tx.objectStore('items').put(o);tx.oncomplete=renderStored}
+function renderStored(){if(!db||!mode)return;let r=db.transaction('items').objectStore('items').getAll();r.onsuccess=()=>{let items=r.result.filter(x=>x.mode===mode),fs=items.filter(x=>x.kind==='file'),as=items.filter(x=>x.kind==='audio');let fl=$(mode==='direction'?'d_filelist':'x');if(fl)fl.innerHTML=fs.map(x=>`<span class="pill">📎 ${esc(x.name)}</span>`).join('')||'<span class="note">Aún no hay archivos.</span>';let al=$(mode==='direction'?'d_audiolist':'t_audiolist');if(al)al.innerHTML=as.map(x=>`<p><audio controls src="${URL.createObjectURL(x.blob)}"></audio> <span class="note">${new Date(x.created).toLocaleString()}</span></p>`).join('')||'<span class="note">Aún no hay audios.</span>';$('mFiles').textContent=fs.length;$('mAudios').textContent=as.length}}
+$('d_files').onchange=()=>[...$('d_files').files].forEach(f=>putItem({id:crypto.randomUUID(),mode:'direction',kind:'file',name:f.name,type:f.type,blob:f,created:Date.now()}));
+async function startRec(which){try{let stream=await navigator.mediaDevices.getUserMedia({audio:true});recorder=new MediaRecorder(stream);chunks=[];recorder.ondataavailable=e=>chunks.push(e.data);recorder.onstop=()=>{let blob=new Blob(chunks,{type:recorder.mimeType});putItem({id:crypto.randomUUID(),mode:which,kind:'audio',name:'registro-audio',type:recorder.mimeType,blob,created:Date.now()});stream.getTracks().forEach(t=>t.stop())};recorder.start();$(which==='direction'?'d_record':'t_record').disabled=true;$(which==='direction'?'d_stop':'t_stop').disabled=false}catch(e){alert('No he podido acceder al micrófono. Revisa el permiso del navegador.')}}
+function stopRec(which){if(recorder&&recorder.state!=='inactive')recorder.stop();$(which==='direction'?'d_record':'t_record').disabled=false;$(which==='direction'?'d_stop':'t_stop').disabled=true}
+$('d_record').onclick=()=>startRec('direction');$('d_stop').onclick=()=>stopRec('direction');$('t_record').onclick=()=>startRec('team');$('t_stop').onclick=()=>stopRec('team');
+
+$('exportBtn').onclick=()=>{if(!mode)return;let pack={mode,data:all[mode],exportedAt:new Date().toISOString()};let blob=new Blob([JSON.stringify(pack,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`radiografia-${mode}-${Date.now()}.json`;a.click()}
+$('clearBtn').onclick=()=>{if(!mode||!confirm('¿Borrar los datos de esta vista en este dispositivo?'))return;all[mode]=mode==='direction'?{answers:{},activities:[]}:{answers:{},activities:[],style:{}};localStorage.setItem(SKEY,JSON.stringify(all));if(db){let tx=db.transaction('items','readwrite'),store=tx.objectStore('items'),r=store.getAll();r.onsuccess=()=>{r.result.filter(x=>x.mode===mode).forEach(x=>store.delete(x.id));tx.oncomplete=()=>location.reload()}}else location.reload()}
 </script>
 </body></html>
