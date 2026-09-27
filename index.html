@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="es">
 <head>
@@ -26,7 +27,7 @@ section.step{display:none}section.step.active{display:block}
 <header><div class="brand">Elisabeth Tchana<small>Consultoría de negocio · Radiografía beta</small></div></header>
 <main>
 <div class="card">
-<strong>MVP funcional local</strong>
+<strong>MVP funcional · v0.3.1</strong>
 <p class="note">Tus respuestas, archivos y audios se guardan en <b>este navegador y este dispositivo</b>. Puedes cerrar y volver. En esta beta todavía no se envían a Elisabeth ni se procesan con IA.</p>
 <div class="progress"><i id="bar"></i></div><div id="status" class="note"></div>
 </div>
@@ -97,21 +98,32 @@ function show(i){current=i;steps.forEach((s,j)=>s.classList.toggle('active',j===
 function update(){let answered=Object.values(state.answers).filter(v=>String(v).trim()).length;let pct=Math.round(answered/fields.length*100);document.getElementById('bar').style.width=pct+'%';document.getElementById('status').textContent=`${pct}% de respuestas base completadas · guardado automático`;document.getElementById('mAnswers').textContent=answered;document.getElementById('mActs').textContent=state.activities.length;document.getElementById('summary').textContent=answered?'Tu información está guardada en este dispositivo. Puedes cerrar esta página y continuar después.':'Empieza por completar la información de empresa.';renderActs()}
 function renderActs(){document.getElementById('activities').innerHTML=state.activities.map((a,i)=>`<p><span class="pill">${a.min||'?'} min</span><b>${escapeHtml(a.text)}</b> · ${escapeHtml(a.tool||'sin herramienta')}</p>`).join('')}
 function escapeHtml(s=''){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-document.getElementById('addActivity').onclick=()=>{let text=actividad.value.trim();if(!text)return alert('Cuéntame qué acabas de hacer.');state.activities.push({text,min:minutos.value,tool:herramienta.value,at:new Date().toISOString()});actividad.value=minutos.value=herramienta.value='';persist()};
+const actividadEl=document.getElementById('actividad');
+const minutosEl=document.getElementById('minutos');
+const herramientaEl=document.getElementById('herramienta');
+document.getElementById('addActivity').onclick=()=>{let text=actividadEl.value.trim();if(!text)return alert('Cuéntame qué acabas de hacer.');state.activities.push({text,min:minutosEl.value,tool:herramientaEl.value,at:new Date().toISOString()});actividadEl.value='';minutosEl.value='';herramientaEl.value='';persist()};
 
 // IndexedDB files/audio
-let db; const req=indexedDB.open('et_radiografia_files',1);req.onupgradeneeded=e=>{e.target.result.createObjectStore('items',{keyPath:'id'})};req.onsuccess=e=>{db=e.target.result;renderStored()};
+let db; const req=indexedDB.open('et_radiografia_files',1);req.onupgradeneeded=e=>{if(!e.target.result.objectStoreNames.contains('items'))e.target.result.createObjectStore('items',{keyPath:'id'})};req.onsuccess=e=>{db=e.target.result;renderStored()};
 function putItem(obj){let tx=db.transaction('items','readwrite');tx.objectStore('items').put(obj);tx.oncomplete=renderStored}
-function renderStored(){if(!db)return;let r=db.transaction('items').objectStore('items').getAll();r.onsuccess=()=>{let items=r.result,fs=items.filter(x=>x.kind==='file'),as=items.filter(x=>x.kind==='audio');filelist.innerHTML=fs.map(x=>`<span class="pill">📎 ${escapeHtml(x.name)}</span>`).join('')||'<span class="note">Todavía no has adjuntado archivos.</span>';audiolist.innerHTML=as.map(x=>`<p><audio controls src="${URL.createObjectURL(x.blob)}"></audio> <span class="note">${new Date(x.created).toLocaleString()}</span></p>`).join('');mFiles.textContent=fs.length}};
-files.onchange=()=>[...files.files].forEach(f=>putItem({id:crypto.randomUUID(),kind:'file',name:f.name,type:f.type,blob:f,created:Date.now()}));
+const fileInput=document.getElementById('files');
+const fileListEl=document.getElementById('filelist');
+const audioListEl=document.getElementById('audiolist');
+const mFilesEl=document.getElementById('mFiles');
+function renderStored(){if(!db)return;let r=db.transaction('items').objectStore('items').getAll();r.onsuccess=()=>{let items=r.result,fs=items.filter(x=>x.kind==='file'),as=items.filter(x=>x.kind==='audio');fileListEl.innerHTML=fs.map(x=>`<span class="pill">📎 ${escapeHtml(x.name)}</span>`).join('')||'<span class="note">Todavía no has adjuntado archivos.</span>';audioListEl.innerHTML=as.map(x=>`<p><audio controls src="${URL.createObjectURL(x.blob)}"></audio> <span class="note">${new Date(x.created).toLocaleString()}</span></p>`).join('');mFilesEl.textContent=fs.length}};
+fileInput.onchange=()=>[...fileInput.files].forEach(f=>putItem({id:crypto.randomUUID(),kind:'file',name:f.name,type:f.type,blob:f,created:Date.now()}));
 
 // Recorder
 let rec,chunks=[];
-record.onclick=async()=>{try{let stream=await navigator.mediaDevices.getUserMedia({audio:true});rec=new MediaRecorder(stream);chunks=[];rec.ondataavailable=e=>chunks.push(e.data);rec.onstop=()=>{let blob=new Blob(chunks,{type:rec.mimeType});putItem({id:crypto.randomUUID(),kind:'audio',name:'respuesta-audio',type:rec.mimeType,blob,created:Date.now()});stream.getTracks().forEach(t=>t.stop())};rec.start();record.disabled=true;stop.disabled=false;record.textContent='Grabando…'}catch(e){alert('El navegador no ha permitido usar el micrófono. Revisa permisos o abre la futura versión HTTPS.')}}
-stop.onclick=()=>{if(rec&&rec.state!=='inactive')rec.stop();record.disabled=false;stop.disabled=true;record.textContent='● Grabar respuesta'};
+const recordBtn=document.getElementById('record');
+const stopBtn=document.getElementById('stop');
+recordBtn.onclick=async()=>{try{let stream=await navigator.mediaDevices.getUserMedia({audio:true});rec=new MediaRecorder(stream);chunks=[];rec.ondataavailable=e=>chunks.push(e.data);rec.onstop=()=>{let blob=new Blob(chunks,{type:rec.mimeType});putItem({id:crypto.randomUUID(),kind:'audio',name:'respuesta-audio',type:rec.mimeType,blob,created:Date.now()});stream.getTracks().forEach(t=>t.stop())};rec.start();recordBtn.disabled=true;stopBtn.disabled=false;recordBtn.textContent='Grabando…'}catch(e){alert('El navegador no ha permitido usar el micrófono. Revisa los permisos del navegador.')}}
+stopBtn.onclick=()=>{if(rec&&rec.state!=='inactive')rec.stop();recordBtn.disabled=false;stopBtn.disabled=true;recordBtn.textContent='● Grabar respuesta'};
 
-export.onclick=()=>{let blob=new Blob([JSON.stringify({...state,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(state.answers.empresa||'empresa')+'-radiografia-beta.json';a.click()};
-clear.onclick=()=>{if(confirm('¿Borrar todas las respuestas y actividades de esta prueba?')){localStorage.removeItem(KEY);if(db){let tx=db.transaction('items','readwrite');tx.objectStore('items').clear();tx.oncomplete=()=>location.reload()}else location.reload()}};
+const exportBtn=document.getElementById('export');
+const clearBtn=document.getElementById('clear');
+exportBtn.onclick=()=>{let blob=new Blob([JSON.stringify({...state,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(state.answers.empresa||'empresa')+'-radiografia-beta.json';a.click()};
+clearBtn.onclick=()=>{if(confirm('¿Borrar todas las respuestas y actividades de esta prueba?')){localStorage.removeItem(KEY);if(db){let tx=db.transaction('items','readwrite');tx.objectStore('items').clear();tx.oncomplete=()=>location.reload()}else location.reload()}};
 show(0);
 </script>
 </body></html>
